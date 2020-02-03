@@ -14,7 +14,7 @@ function PriceSetting() {
   useEffect(()=>{
     let pm = (cost/margin)*margin;
     let um = price-cost;
-    setIndustryNorm(cost/margin);
+    setIndustryNorm(cost/(1-margin));
     setProductMargin(pm);
     setUserMargin(um);
     if (pm >= um){
@@ -31,6 +31,7 @@ function PriceSetting() {
         <div className="inputs"> 
           <form>
             <select onChange={(event)=>{setMargin( Number(event.target.value))}}>
+              <option disabled selected value>Industry</option>
               <option value={.15}>A</option>
               <option value={.20}>B</option>
               <option value={.25}>C</option>
