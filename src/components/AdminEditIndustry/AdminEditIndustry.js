@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import './AdminEditIndustry.css';
 import Modal from 'react-awesome-modal';
+import Nav from '../Nav/Nav';
 
 class AdminEditIndustry extends Component{
 
+  // Store local state
   state = {
     visible: false,
     industry: '',
@@ -19,6 +21,7 @@ class AdminEditIndustry extends Component{
     }
   }
 
+  // GET data from industry table on load
   componentDidMount(){
     this.props.dispatch({type: `GET_INDUSTRY`});
   }
@@ -26,6 +29,7 @@ class AdminEditIndustry extends Component{
   // Adds class if input has a value, removes the class if input has no value
   checkForValue = e => e.target.value ? e.target.classList.add('text-field-active') : e.target.classList.remove('text-field-active');
 
+  // Close modal popup, reset local state
   closeModal = () => {
     this.setState({
       visible : false,
@@ -42,6 +46,7 @@ class AdminEditIndustry extends Component{
     });
   }
 
+  // Update local state on input value change in edit modal
   handleEditChange = (e, propName) => {
     this.setState({
       selectedIndustry: {
@@ -52,6 +57,7 @@ class AdminEditIndustry extends Component{
     this.checkForValue(e);
   }
 
+  // Update local state on input value change for new industry
   handleNewChange = (e, propName) => {
     this.setState({
       newIndustry: {
@@ -62,21 +68,27 @@ class AdminEditIndustry extends Component{
     this.checkForValue(e);
   }
 
+  // Dispatch new industry to saga
   handlePost = () => {
     this.props.dispatch({type: `POST_ADMIN_INDUSTRY_INFO`, payload: this.state.newIndustry});
+    this.closeModal();
   }
 
+  // Dispatch edited industry to saga
   handleSave = () => {
     this.props.dispatch({type: `PUT_ADMIN_INDUSTRY_INFO`, payload: this.state.selectedIndustry});
+    this.closeModal();
   }
 
+  // Open modal popup, populate inputs with selected industry data from local state
   openModal = industry => {
     if(!industry.target){
       this.setState({
         visible: true,
         industry: industry.industry,
         selectedIndustry: {
-          ...industry
+          ...industry,
+          margin: industry.margin*100
         }
       });
     }
@@ -85,6 +97,7 @@ class AdminEditIndustry extends Component{
     }
   }
 
+  // Return to admin page
   pushHistoryBack = () => {
     this.props.history.push('/admin');
   }
@@ -95,15 +108,16 @@ class AdminEditIndustry extends Component{
 
     return(
       <center>
+        <Nav />
         <div className="main-container">
           <button className="close-window-button" onClick={this.pushHistoryBack}>x</button>
           <h1 className="main-heading admin-industry-heading">Industry Information</h1>
+          <button className="normal-btn admin-industry-add-btn" onClick={this.openModal}>Add New Industry</button>
           <table className="admin-industry-table">
             <thead>
               <tr>
                 <th>Industry</th>
                 <th>Margin</th>
-                <th></th>
                 <th></th>
               </tr>
             </thead>
@@ -113,7 +127,6 @@ class AdminEditIndustry extends Component{
                   <td>{industry.industry}</td>
                   <td>{industry.margin * 100}%</td>
                   <td className="admin-edit-industry-cell" onClick={()=>this.openModal(industry)}>Edit Info</td>
-                  <td className="admin-edit-industry-cell" onClick={this.openModal}>Add New Industry</td>
                 </tr>
               )}
             </tbody>
@@ -130,25 +143,25 @@ class AdminEditIndustry extends Component{
                 <button className="close-window-button" onClick={this.closeModal}>x</button>
                 <h1 className="main-heading modal-heading">{this.state.industry}</h1>
                 
-                <div className="admin-industry-text-field-container">
+                <div className="text-field-container">
                   <input 
-                    className="text-field admin-industry-text-field-industry text-field-active" 
+                    className="text-field text-field-active" 
                     type="text" 
                     value={editIndustry.industry}
                     onChange={(event)=>this.handleEditChange(event, 'industry')}
                   />
-                  <label className="text-field-label admin-industry-label-industry">industry</label>
+                  <label className="text-field-label">industry</label>
                   <div className="text-field-mask admin-industry-mask-industry"></div>
                 </div>
 
-                <div className="admin-industry-text-field-container">
+                <div className="text-field-container">
                   <input 
-                    className="text-field admin-industry-text-field-margin text-field-active" 
+                    className="text-field text-field-active" 
                     type="text" 
                     value={editIndustry.margin} 
                     onChange={(event)=>this.handleEditChange(event, 'margin')}
                   />
-                  <label className="text-field-label admin-industry-label-margin">margin (%)</label>
+                  <label className="text-field-label">margin (%)</label>
                   <div className="text-field-mask admin-industry-mask-margin"></div>
                 </div>
 
@@ -163,25 +176,25 @@ class AdminEditIndustry extends Component{
                 <button className="close-window-button" onClick={this.closeModal}>x</button>
                 <h1 className="main-heading modal-heading">Add New Industry</h1>
                 
-                <div className="admin-industry-text-field-container">
+                <div className="text-field-container">
                   <input 
-                    className="text-field admin-industry-text-field-industry" 
+                    className="text-field" 
                     type="text" 
                     value={newIndustry.industry}
                     onChange={(event)=>this.handleNewChange(event, 'industry')}
                   />
-                  <label className="text-field-label admin-industry-label-industry">industry</label>
+                  <label className="text-field-label">industry</label>
                   <div className="text-field-mask admin-industry-mask-industry"></div>
                 </div>
 
-                <div className="admin-industry-text-field-container">
+                <div className="text-field-container">
                   <input 
-                    className="text-field admin-industry-text-field-margin" 
+                    className="text-field" 
                     type="text" 
                     value={newIndustry.margin} 
                     onChange={(event)=>this.handleNewChange(event, 'margin')}
                   />
-                  <label className="text-field-label admin-industry-label-margin">margin (%)</label>
+                  <label className="text-field-label">margin (%)</label>
                   <div className="text-field-mask admin-industry-mask-margin"></div>
                 </div>
 
@@ -199,7 +212,7 @@ class AdminEditIndustry extends Component{
 }
 
 const putReduxStateOnProps = (reduxState)=>({
-  industry: reduxState.industry.industry,
+  industry: reduxState.industry,
 });
 
 export default connect(putReduxStateOnProps)(AdminEditIndustry);

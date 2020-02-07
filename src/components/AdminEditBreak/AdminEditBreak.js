@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useCallback} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import './AdminEditBreak.css';
 import AdminCalcQuestion from '../AdminCalcQuestion/AdminCalcQuestion';
@@ -6,8 +6,9 @@ import AdminCalcQuestion from '../AdminCalcQuestion/AdminCalcQuestion';
 export default function AdminEditBreak() {
 
   const question = useSelector((state)=>state.admin.adminQuestion);
-  const dispatch = useDispatch();
+  const dispatch = useCallback(useDispatch(), []);
 
+  // Runs when component mounts
   useEffect(()=>{
     dispatch({type: `GET_ADMIN_QUESTION`, payload: 2});
   }, []);
