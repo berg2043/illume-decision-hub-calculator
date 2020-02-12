@@ -16,11 +16,12 @@ export default function BreakEven() {
   const inputData = useSelector(state => state.input);
   const userCheckboxes = useSelector(state=>state.userCheckboxes);
   const dispatch = useCallback(useDispatch(), []);
+  const user = useSelector(state => state.userInfo);
 
   // Dynamically calculates the break even point depending on settings
   useEffect(() => {
     let directCosts = +splitPath[7] === 7 ?
-      +inputData[3] :
+      +inputData[3] || 0:
       ((+inputData[8] || 0) * (+inputData[9] || 0)) + (+inputData[10] || 0) + (+inputData[11] || 0);
 
     let indirectCosts = +splitPath[23] === 8 ?
@@ -81,7 +82,7 @@ export default function BreakEven() {
       })
       setSplitPath(temp);
     }
-  }, [splits]);
+  }, [splits, inputData]);
 
   // Adds class if input has a value, removes the class if input has no value
   const checkForValue = e => e.target.value ? e.target.classList.add('text-field-active') : e.target.classList.remove('text-field-active');
@@ -100,30 +101,41 @@ export default function BreakEven() {
       return (
         <>
           {
-            splits[split] ?
-              <form>
-                {splits[split].map(radio => {
-                  return (
-                    <span key={radio.id}>
-                      <label className="radio-container">{radio.split_text}
-                        <input
-                          type='radio'
-                          name="next"
-                          value={radio.next_id}
-                          checked={+splitPath[split] === +radio.next_id}
-                          onChange={(e) => { radioChange(e, split) }}
-                        />
-                        <span className="radio-btn"></span>
-                      </label>
-                    </span>
-                  );
-                })}
-              </form> :
+            splits[split] && userCheckboxes.findIndex(el => el.question_id === split) !== -1 ?
+              <div className="max-width-container">
+                <form>
+                  {splits[split].map(radio => {
+                    return (
+                      <span key={radio.id}>
+                        <div className="radio-wrapper">
+                          <label className="radio-container">
+                            {
+                              user[0] && user[0].service && radio.split_text?
+                              radio.split_text.replace(/Product/g, 'Service'):
+                              radio.split_text
+                            }
+                            <input
+                              type='radio'
+                              name="next"
+                              value={radio.next_id}
+                              checked={+splitPath[split] === +radio.next_id}
+                              onChange={(e) => { radioChange(e, split) }}
+                            />
+                            <span className="radio-btn"></span>
+                          </label>
+                        </div>
+                      </span>
+                    );
+                  })}
+                </form>
+              </div>
+              :
               null
           }
           {
             splitPath[split.toString()] ?
-              stepper(splitPath[split.toString()]) :
+              stepper(splitPath[split.toString()]) 
+              :
               null
           }
         </>
@@ -135,13 +147,24 @@ export default function BreakEven() {
     let questionId = paths[start] && paths[start].question_id;
 
     return (
-      <div>
-        <p className="results-text">{paths[start] && paths[start].question}</p>
+      <div className="max-width-container">
+        <div className="align-left">
+          {
+            userCheckboxes.findIndex(el => el.question_id === (paths[start] && paths[start].question_id)) !== -1 ?
+              <p className="results-text">
+                {
+                  user[0] && user[0].service &&  paths[start] && paths[start].question?
+                  paths[start].question.replace(/product/g, 'service'):
+                  paths[start].question
+                }
+              </p>:
+              null
+          }
+        </div>
         {doesSplit ?
-          null 
-          :
+          null :
           userCheckboxes.findIndex(el => el.question_id === (paths[start] && paths[start].question_id)) !== -1 ?
-            <div className="text-field-container">
+            <div className="text-field-container" key={paths[start] && paths[start].question_id}>
               <input
                 className="text-field text-field-active"
                 type={paths[start] && paths[start].response_type}
@@ -161,8 +184,7 @@ export default function BreakEven() {
               />
               <label className="text-field-label">enter value</label>
               <div className="text-field-mask stepper-mask"></div>
-            </div>
-            :
+            </div> :
             null
         }
         {
@@ -180,13 +202,15 @@ export default function BreakEven() {
     <center>
       <Nav />
       <div className="main-container">
-        <h1 className="main-heading">Break Even Pricing</h1>
-        {stepper(6)}
-        <div className="data-result">
-          <h3 className="data-result-heading">Result</h3>
-          <p>You're break even price is {price.toLocaleString("en-US", { style: "currency", currency: 'USD' })}.</p>
-          <br />
-          <p>You must sell your product at a price higher than {price.toLocaleString("en-US", { style: "currency", currency: 'USD' })} to make a profit.</p>
+        <div className="top-card-container">
+          <h1 className="main-heading">Break Even Pricing</h1>
+          {stepper(6)}
+          <div className="data-result">
+            <h3 className="data-result-heading">Result</h3>
+            <p>You're break even price is {price.toLocaleString("en-US", { style: "currency", currency: 'USD' })}.</p>
+            <br />
+            <p>You must sell your product at a price higher than {price.toLocaleString("en-US", { style: "currency", currency: 'USD' })} to make a profit.</p>
+          </div>
         </div>
       </div>
     </center>

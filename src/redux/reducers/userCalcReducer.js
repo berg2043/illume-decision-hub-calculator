@@ -1,6 +1,6 @@
-const userInfoReducer = (state = [], action) => {
+const userCalcReducer = (state = [], action) => {
   switch (action.type) {
-    case 'SET_USER_INFO':
+    case 'SET_CALC_INFO':
       return [...action.payload];
     default:
       return state;
@@ -9,4 +9,4 @@ const userInfoReducer = (state = [], action) => {
 
 // user will be on the redux state at:
 // state.user
-export default userInfoReducer;
+export default userCalcReducer;

@@ -13,11 +13,13 @@ class AdminEditIndustry extends Component{
     selectedIndustry: {
       id: '',
       industry: '',
-      margin: ''
+      gross_margin: '',
+      op_margin: ''
     },
     newIndustry: {
       industry: '',
-      margin: ''
+      gross_margin: '',
+      op_margin: ''
     }
   }
 
@@ -37,11 +39,13 @@ class AdminEditIndustry extends Component{
       selectedIndustry: {
         id: '',
         industry: '',
-        margin: ''
+        gross_margin: '',
+        op_margin: ''
       },
       newIndustry: {
         industry: '',
-        margin: ''
+        gross_margin: '',
+        op_margin: ''
       }
     });
   }
@@ -96,7 +100,8 @@ class AdminEditIndustry extends Component{
         industry: industry.industry,
         selectedIndustry: {
           ...industry,
-          margin: industry.margin*100
+          gross_margin: industry.gross_margin*100,
+          op_margin: industry.op_margin*100
         }
       });
     }
@@ -116,125 +121,182 @@ class AdminEditIndustry extends Component{
       <center>
         <Nav />
         <div className="main-container">
-          <button className="close-window-button" onClick={this.pushHistoryBack}>x</button>
-          <h1 className="main-heading admin-industry-heading">Industry Information</h1>
-          <button className="normal-btn admin-industry-add-btn" onClick={this.openModal}>Add New Industry</button>
-          <table className="admin-industry-table">
-            <thead>
-              <tr>
-                <th>Industry</th>
-                <th>Margin</th>
-                <th>Enabled?</th>
-                <th></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.props.industry.map(industry => 
-                <>
-                  {industry.enabled ?
-                    <tr key={industry.id}>
-                      <td>{industry.industry}</td>
-                      <td>{industry.margin * 100}%</td>
-                      <td>Yes</td>
-                      {industry.enabled ?
-                        <td className="admin-delete-industry-cell" onClick={()=>this.handleDelete(industry)}>DISABLE</td>
-                        :
-                        <td className="admin-delete-industry-cell" onClick={()=>this.handleDelete(industry)}>ENABLE</td>
-                      }
-                      <td className="admin-edit-industry-cell" onClick={()=>this.openModal(industry)}>Edit Info</td>
-                    </tr>
-                    :
-                    <tr id="admin-industry-disabled" key={industry.id}>
-                      <td>{industry.industry}</td>
-                      <td>{industry.margin * 100}%</td>
-                      <td>No</td>
-                      {industry.enabled ?
-                        <td className="admin-delete-industry-cell" onClick={()=>this.handleDelete(industry)}>DISABLE</td>
-                        :
-                        <td className="admin-delete-industry-cell" onClick={()=>this.handleDelete(industry)}>ENABLE</td>
-                      }
-                      <td className="admin-edit-industry-cell" onClick={()=>this.openModal(industry)}>Edit Info</td>
-                    </tr>
-                  }
-                </>
-              )}
-            </tbody>
-          </table>
-          <Modal 
-            visible={this.state.visible}
-            width="440"
-            height="500"
-            effect="fadeInUp"
-            onClickAway={this.closeModal}
-          >
-            {this.state.industry ? 
-              <div className="modal-container">
-                <button className="close-window-button" onClick={this.closeModal}>x</button>
-                <h1 className="main-heading modal-heading">{this.state.industry}</h1>
-                
-                <div className="text-field-container">
-                  <input 
-                    className="text-field text-field-active" 
-                    type="text" 
-                    value={editIndustry.industry}
-                    onChange={(event)=>this.handleEditChange(event, 'industry')}
-                  />
-                  <label className="text-field-label">industry</label>
-                  <div className="text-field-mask admin-industry-mask-industry"></div>
+          <div className="top-card-container">
+            <button className="close-window-button" onClick={this.pushHistoryBack}>x</button>
+            <h1 className="main-heading admin-industry-heading">Industry Information</h1> 
+            <button className="normal-btn admin-industry-add-btn" onClick={this.openModal}>Add New Industry</button>
+            <table className="admin-industry-table">
+              <thead>
+                <tr>
+                  <th>Industry</th>
+                  <th>Gross Margin</th>
+                  <th>Operating Margin</th>
+                  <th>Enabled?</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.props.industry.map(industry => 
+                  <>
+                    {industry.enabled ?
+                      <tr key={industry.id}>
+                        <td>{industry.industry}</td>
+                        <td>{(industry.gross_margin * 100).toFixed(0)}%</td>
+                        <td>{(industry.op_margin * 100).toFixed(0)}%</td>
+                        <td>Yes</td>
+                        {industry.enabled ?
+                          <td 
+                            className="admin-delete-industry-cell" 
+                            onClick={()=>this.handleDelete(industry)}
+                          >
+                            DISABLE
+                          </td>
+                          :
+                          <td 
+                            className="admin-delete-industry-cell" 
+                            onClick={()=>this.handleDelete(industry)}
+                          >
+                            ENABLE
+                          </td>
+                        }
+                        <td 
+                          className="admin-edit-industry-cell" 
+                          onClick={()=>this.openModal(industry)}
+                        >
+                          Edit Info
+                        </td>
+                      </tr>
+                      :
+                      <tr id="admin-industry-disabled" key={industry.id}>
+                        <td>{industry.industry}</td>
+                        <td>{(industry.gross_margin * 100).toFixed(0)}%</td>
+                        <td>{(industry.op_margin * 100).toFixed(0)}%</td>
+                        <td>No</td>
+                        {industry.enabled ?
+                          <td 
+                            className="admin-delete-industry-cell" 
+                            onClick={()=>this.handleDelete(industry)}
+                          >
+                            DISABLE
+                          </td>
+                          :
+                          <td 
+                            className="admin-delete-industry-cell" 
+                            onClick={()=>this.handleDelete(industry)}
+                          >
+                            ENABLE
+                          </td>
+                        }
+                        <td 
+                          className="admin-edit-industry-cell" 
+                          onClick={()=>this.openModal(industry)}
+                        >
+                          Edit Info
+                        </td>
+                      </tr>
+                    }
+                  </>
+                )}
+              </tbody>
+            </table>
+            <Modal 
+              visible={this.state.visible}
+              width="440"
+              height="500"
+              effect="fadeInUp"
+              onClickAway={this.closeModal}
+            >
+              {this.state.industry ? 
+                <div className="modal-container">
+                  <button className="close-window-button" onClick={this.closeModal}>x</button>
+                  <h1 className="main-heading modal-heading">{this.state.industry}</h1>
+                  
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field text-field-active" 
+                      type="text" 
+                      value={editIndustry.industry}
+                      onChange={(event)=>this.handleEditChange(event, 'industry')}
+                    />
+                    <label className="text-field-label">industry</label>
+                    <div className="text-field-mask admin-industry-mask-industry"></div>
+                  </div>
+
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field text-field-active" 
+                      type="text" 
+                      value={editIndustry.gross_margin} 
+                      onChange={(event)=>this.handleEditChange(event, 'gross_margin')}
+                    />
+                    <label className="text-field-label">gross margin (%)</label>
+                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                  </div>
+
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field text-field-active" 
+                      type="text" 
+                      value={editIndustry.op_margin} 
+                      onChange={(event)=>this.handleEditChange(event, 'op_margin')}
+                    />
+                    <label className="text-field-label">operating margin (%)</label>
+                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                  </div>
+
+                  <div className="modal-btn-container">
+                    <button className="normal-btn" onClick={this.handleSave}>Save</button>
+                  </div>
                 </div>
 
-                <div className="text-field-container">
-                  <input 
-                    className="text-field text-field-active" 
-                    type="text" 
-                    value={editIndustry.margin} 
-                    onChange={(event)=>this.handleEditChange(event, 'margin')}
-                  />
-                  <label className="text-field-label">margin (%)</label>
-                  <div className="text-field-mask admin-industry-mask-margin"></div>
-                </div>
+                :
 
-                <div className="modal-btn-container">
-                  <button className="normal-btn" onClick={this.handleSave}>Save</button>
-                </div>
-              </div>
+                <div className="modal-container">
+                  <button className="close-window-button" onClick={this.closeModal}>x</button>
+                  <h1 className="main-heading modal-heading">Add New Industry</h1>
+                  
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field" 
+                      type="text" 
+                      value={newIndustry.industry}
+                      onChange={(event)=>this.handleNewChange(event, 'industry')}
+                    />
+                    <label className="text-field-label">industry</label>
+                    <div className="text-field-mask admin-industry-mask-industry"></div>
+                  </div>
 
-              :
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field" 
+                      type="text" 
+                      value={newIndustry.gross_margin} 
+                      onChange={(event)=>this.handleNewChange(event, 'gross_margin')}
+                    />
+                    <label className="text-field-label">gross margin (%)</label>
+                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                  </div>
 
-              <div className="modal-container">
-                <button className="close-window-button" onClick={this.closeModal}>x</button>
-                <h1 className="main-heading modal-heading">Add New Industry</h1>
-                
-                <div className="text-field-container">
-                  <input 
-                    className="text-field" 
-                    type="text" 
-                    value={newIndustry.industry}
-                    onChange={(event)=>this.handleNewChange(event, 'industry')}
-                  />
-                  <label className="text-field-label">industry</label>
-                  <div className="text-field-mask admin-industry-mask-industry"></div>
-                </div>
+                  <div className="text-field-container">
+                    <input 
+                      className="text-field" 
+                      type="text" 
+                      value={newIndustry.op_margin} 
+                      onChange={(event)=>this.handleNewChange(event, 'op_margin')}
+                    />
+                    <label className="text-field-label">operating margin (%)</label>
+                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                  </div>
 
-                <div className="text-field-container">
-                  <input 
-                    className="text-field" 
-                    type="text" 
-                    value={newIndustry.margin} 
-                    onChange={(event)=>this.handleNewChange(event, 'margin')}
-                  />
-                  <label className="text-field-label">margin (%)</label>
-                  <div className="text-field-mask admin-industry-mask-margin"></div>
+                  <div className="modal-btn-container">
+                    <button className="normal-btn" onClick={this.handlePost}>Add New</button>
+                  </div>
                 </div>
-
-                <div className="modal-btn-container">
-                  <button className="normal-btn" onClick={this.handlePost}>Add New</button>
-                </div>
-              </div>
-            }
-            
-          </Modal>
+              }
+              
+            </Modal>
+          </div>
         </div>
       </center>
     );
@@ -242,7 +304,7 @@ class AdminEditIndustry extends Component{
 }
 
 const putReduxStateOnProps = reduxState => ({
-  industry: reduxState.admin.adminIndustry,
+  industry: reduxState.adminIndustry,
 });
 
 export default connect(putReduxStateOnProps)(AdminEditIndustry);

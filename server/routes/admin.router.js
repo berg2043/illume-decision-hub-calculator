@@ -1,3 +1,4 @@
+const encryptLib = require('../modules/encryption');
 const express = require('express');
 const pool = require('../modules/pool');
 const router = express.Router();
@@ -90,9 +91,9 @@ router.get('/user-info',rejectUnauthenticated, rejectNonAdmin, (req, res) => {
 
 // POST route for admin to add new industry information
 router.post('/industry-info', rejectUnauthenticated, rejectNonAdmin, (req, res) => {
-  const id = [req.body.industry, req.body.margin/100];
-  const sqlQuery = `INSERT INTO industry (industry, margin)
-                    VALUES ($1, $2);`;
+  const id = [req.body.industry, req.body.gross_margin/100, req.body.op_margin/100];
+  const sqlQuery = `INSERT INTO industry (industry, gross_margin, op_margin)
+                    VALUES ($1, $2, $3);`;
   pool.query(sqlQuery, id)
     .then(result => {
     res.sendStatus(201);
@@ -105,9 +106,9 @@ router.post('/industry-info', rejectUnauthenticated, rejectNonAdmin, (req, res) 
 
 // PUT route for admin to update industry information
 router.put('/industry-info', rejectUnauthenticated, rejectNonAdmin, (req, res) => {
-  const id = [req.body.id, req.body.industry, req.body.margin/100];
+  const id = [req.body.id, req.body.industry, req.body.gross_margin/100, req.body.op_margin/100];
   const sqlQuery = `UPDATE industry 
-                    SET industry = $2, margin = $3
+                    SET industry = $2, gross_margin = $3, op_margin = $4
                     WHERE id = $1;`;
   pool.query(sqlQuery, id)
   .then(result => {
@@ -143,7 +144,7 @@ router.put('/user-info', rejectUnauthenticated, rejectNonAdmin, async (req, res)
   const phone = req.body.phone;
   const industry = req.body.industryid;
   const email = req.body.email;
-  const password = req.body.password;
+  const password = encryptLib.encryptPassword(req.body.password);
   const usertype = req.body.usertype;
   const sqlQueryContactInfo = ` UPDATE contact_info
                                 SET "name" = $1, "business_name" = $2, phone_number = $3, industry_id = $4

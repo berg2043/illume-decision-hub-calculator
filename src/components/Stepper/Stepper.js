@@ -12,43 +12,48 @@ export default function Stepper() {
   const questionData = useSelector(state => state.question);
   const splitData = useSelector(state => state.split);
   const lastPageID = useSelector(state => state.previousQuestion);
-  const userCheckboxes = useSelector(state=>state.userCheckboxes);
   const history = useHistory();
+  const user = useSelector(state => state.userInfo);
   const [input, setInput] = useState(inputData[questionData.question_id] || '');
   const [splitNext, setSplitNext] = useState('');
 
-  useEffect(() => {
-    if (
-      questionData.question_id &&
-      questionData.id !== lastPageID[lastPageID.length - 1] &&
-      userCheckboxes.findIndex(el => el.question_id === questionData.question_id) === -1
-    ) {
-      nextPage();
-    }
-  }, [questionData, userCheckboxes])
-
+  // imports previous user inputs
   useEffect(() => {
     setInput(inputData[questionData.question_id] || '');
-  }, [inputData, questionData.question_id])
+  }, [inputData, questionData.question_id]);
 
+  // Gives radio button selection a default value
   useEffect(() => {
+    const split = splitData[0] && splitData[0].next_id;
+    const input = splitData[0] && splitData[0].next_id;
     if (questionData.split) {
-      setSplitNext(splitData[0] && splitData[0].next_id || '')
-      setInput(splitData[0] && splitData[0].next_id || '')
+      setSplitNext(split || '');
+      setInput(input || '');
     }
   }, [questionData.split, inputData, questionData.question_id, splitData]);
 
-  // Adds class if input has a value, removes the class if input has no value
+  useEffect(()=>{
+    if(questionData && questionData.skipToResults){
+      const url = questionData.calculator.replace(/ /g, '-').toLowerCase();
+      delete questionData.skipToResults;
+      dispatch({ type: `SET_QUESTION`, payload: questionData });
+      history.push(`/${url}`);
+    }
+  }, [questionData, history, dispatch]);
+
+  // Add class if input has a value, removes the class if input has no value
   const checkForValue = e => e.target.value ? e.target.classList.add('text-field-active') : e.target.classList.remove('text-field-active');
 
+  // Set local state for input
   const handleChange = e => {
     setInput(e.target.value);
     checkForValue(e);
   }
+
   // Push to next question
   function nextPage() {
-    dispatch({ type: 'ADD_PREVIOUS_QUESTION', payload: questionData.id })
-    dispatch({ type: 'ADD_INPUT_VALUE', payload: { key: questionData.question_id, value: input } })
+    dispatch({ type: 'ADD_PREVIOUS_QUESTION', payload: questionData.id });
+    dispatch({ type: 'ADD_INPUT_VALUE', payload: { key: questionData.question_id, value: input } });
     setInput('');
     if (questionData.next_id == null) {
       const url = questionData.calculator.replace(/ /g, '-').toLowerCase();
@@ -81,59 +86,72 @@ export default function Stepper() {
     <center>
       <Nav />
       <div className='main-container stepper-container'>
-        <form onSubmit={e=>{submit(e)}}>
-          <div>
-            <p className="question-text">
-              {questionData.question}
-            </p>
-            <br />
-            {questionData.split ?
+        <div className="stepper-max-width-container">
+          <div className="top-card-container">
+            <form onSubmit={e=>{submit(e)}}>
               <div>
-                <div className="stepper-radio-container">
-                  {splitData.map(split => {
-                    return (
-                      <span key={split.id}>
-                        <label className="radio-container">{split.split_text}
-                          <input
-                            type="radio"
-                            name="next"
-                            value={split.next_id}
-                            checked={+splitNext === split.next_id}
-                            onChange={(e) => { setSplitNext(split.next_id); setInput(e.target.value); }}
-                          />
-                          <span className="radio-btn"></span>
-                        </label>
+                <p className="question-text">
+                  {
+                    user[0] && user[0].service && questionData.question? 
+                      questionData.question.replace(/product/g, 'service'): 
+                      questionData.question
+                  }
+                </p>
+                <br />
+                {questionData.split ?
+                  <div>
+                    <div className="radio-wrapper">
+                      {splitData.map(split => {
+                        return (
+                          <span key={split.id}>
+                            <label className="radio-container">
+                              {
+                                user[0] && user[0].service && split.split_text?
+                                split.split_text.replace(/Product/g, 'Service'):
+                                split.split_text
+                              }
+                              <input
+                                type="radio"
+                                name="next"
+                                value={split.next_id}
+                                checked={+splitNext === split.next_id}
+                                onChange={(e) => { setSplitNext(split.next_id); setInput(e.target.value); }}
+                              />
+                              <span className="radio-btn"></span>
+                            </label>
+                          </span>
+                        );
+                      })}
+                    </div>
+                    <span className="tooltip-background tooltip-background-radio">
+                      <span className="tooltip-icon">?</span>
+                      <span className="tooltip-text">{questionData.help_text}</span>
+                    </span>
+                  </div>
+                  :
+                  <center>
+                    <div className="text-field-container" key={questionData.question_id}>
+                      <input 
+                        className="text-field"
+                        value={input} 
+                        onChange={(e)=>handleChange(e)} 
+                        type={questionData.response_type} 
+                        autoFocus
+                      />
+                      <label className="text-field-label">enter value</label>
+                      <div className="text-field-mask stepper-mask"></div>
+                      <span className="tooltip-background tooltip-background-textfield">
+                        <span className="tooltip-icon">?</span>
+                        <span className="tooltip-text">{questionData.help_text}</span>
                       </span>
-                    );
-                  })}
-                </div>
-                <span className="tooltip-background tooltip-background-radio">
-                  <span className="tooltip-icon">?</span>
-                  <span className="tooltip-text">{questionData.help_text}</span>
-                </span>
+                    </div>
+                  </center>
+                }
               </div>
-              :
-              <center>
-                <div className="text-field-container">
-                  <input 
-                    className="text-field"
-                    value={input} 
-                    onChange={(e)=>handleChange(e)} 
-                    type={questionData.response_type} 
-                    autoFocus
-                  />
-                  <label className="text-field-label">enter value</label>
-                  <div className="text-field-mask stepper-mask"></div>
-                  <span className="tooltip-background tooltip-background-textfield">
-                    <span className="tooltip-icon">?</span>
-                    <span className="tooltip-text">{questionData.help_text}</span>
-                  </span>
-                </div>
-              </center>
-            }
+            </form>
           </div>
-        </form>
-        <div onClick={lastPage} className='arrow-left' />
+        </div>
+        {lastPageID.length > 0 ? <div onClick={lastPage} className='arrow-left' />: null}
         <div onClick={nextPage} className='arrow-right' />
       </div>
     </center>
