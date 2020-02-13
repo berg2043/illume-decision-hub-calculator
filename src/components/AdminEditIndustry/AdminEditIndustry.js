@@ -130,76 +130,50 @@ class AdminEditIndustry extends Component{
                 <tr>
                   <th>Industry</th>
                   <th>Gross Margin</th>
-                  <th>Operating Margin</th>
+                  <th className="op-margin-cell-width">Operating Margin</th>
                   <th>Enabled?</th>
                   <th></th>
-                  <th></th>
+                  <th className="edit-info-cell-width"></th>
                 </tr>
               </thead>
               <tbody>
                 {this.props.industry.map(industry => 
-                  <>
+                  <tr id={industry.enabled ? '' : "admin-industry-disabled"} key={industry.id}>
+                    <td>{industry.industry}</td>
+                    <td>{(industry.gross_margin * 100).toFixed(0)}%</td>
+                    <td className="op-margin-cell-width">{(industry.op_margin * 100).toFixed(0)}%</td>
                     {industry.enabled ?
-                      <tr key={industry.id}>
-                        <td>{industry.industry}</td>
-                        <td>{(industry.gross_margin * 100).toFixed(0)}%</td>
-                        <td>{(industry.op_margin * 100).toFixed(0)}%</td>
+                      <>
                         <td>Yes</td>
-                        {industry.enabled ?
-                          <td 
-                            className="admin-delete-industry-cell" 
-                            onClick={()=>this.handleDelete(industry)}
-                          >
-                            DISABLE
-                          </td>
-                          :
-                          <td 
-                            className="admin-delete-industry-cell" 
-                            onClick={()=>this.handleDelete(industry)}
-                          >
-                            ENABLE
-                          </td>
-                        }
                         <td 
-                          className="admin-edit-industry-cell" 
-                          onClick={()=>this.openModal(industry)}
+                          className="admin-delete-industry-cell" 
+                          onClick={()=>this.handleDelete(industry)}
                         >
-                          Edit Info
+                          DISABLE
                         </td>
-                      </tr>
+                      </>
                       :
-                      <tr id="admin-industry-disabled" key={industry.id}>
-                        <td>{industry.industry}</td>
-                        <td>{(industry.gross_margin * 100).toFixed(0)}%</td>
-                        <td>{(industry.op_margin * 100).toFixed(0)}%</td>
+                      <>
                         <td>No</td>
-                        {industry.enabled ?
-                          <td 
-                            className="admin-delete-industry-cell" 
-                            onClick={()=>this.handleDelete(industry)}
-                          >
-                            DISABLE
-                          </td>
-                          :
-                          <td 
-                            className="admin-delete-industry-cell" 
-                            onClick={()=>this.handleDelete(industry)}
-                          >
-                            ENABLE
-                          </td>
-                        }
                         <td 
-                          className="admin-edit-industry-cell" 
-                          onClick={()=>this.openModal(industry)}
+                          className="admin-delete-industry-cell" 
+                          onClick={()=>this.handleDelete(industry)}
                         >
-                          Edit Info
+                          ENABLE
                         </td>
-                      </tr>
+                      </>
                     }
-                  </>
+                    <td 
+                      className="admin-edit-industry-cell edit-info-cell-width" 
+                      onClick={()=>this.openModal(industry)}
+                    >
+                      Edit Info
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
+
             <Modal 
               visible={this.state.visible}
               width="440"
@@ -217,7 +191,7 @@ class AdminEditIndustry extends Component{
                       className="text-field text-field-active" 
                       type="text" 
                       value={editIndustry.industry}
-                      onChange={(event)=>this.handleEditChange(event, 'industry')}
+                      onChange={(e)=>this.handleEditChange(e, 'industry')}
                     />
                     <label className="text-field-label">industry</label>
                     <div className="text-field-mask admin-industry-mask-industry"></div>
@@ -228,10 +202,10 @@ class AdminEditIndustry extends Component{
                       className="text-field text-field-active" 
                       type="text" 
                       value={editIndustry.gross_margin} 
-                      onChange={(event)=>this.handleEditChange(event, 'gross_margin')}
+                      onChange={(e)=>this.handleEditChange(e, 'gross_margin')}
                     />
                     <label className="text-field-label">gross margin (%)</label>
-                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                    <div className="text-field-mask admin-industry-mask-gross-margin"></div>
                   </div>
 
                   <div className="text-field-container">
@@ -239,10 +213,10 @@ class AdminEditIndustry extends Component{
                       className="text-field text-field-active" 
                       type="text" 
                       value={editIndustry.op_margin} 
-                      onChange={(event)=>this.handleEditChange(event, 'op_margin')}
+                      onChange={(e)=>this.handleEditChange(e, 'op_margin')}
                     />
                     <label className="text-field-label">operating margin (%)</label>
-                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                    <div className="text-field-mask admin-industry-mask-op-margin"></div>
                   </div>
 
                   <div className="modal-btn-container">
@@ -261,7 +235,7 @@ class AdminEditIndustry extends Component{
                       className="text-field" 
                       type="text" 
                       value={newIndustry.industry}
-                      onChange={(event)=>this.handleNewChange(event, 'industry')}
+                      onChange={(e)=>this.handleNewChange(e, 'industry')}
                     />
                     <label className="text-field-label">industry</label>
                     <div className="text-field-mask admin-industry-mask-industry"></div>
@@ -272,10 +246,10 @@ class AdminEditIndustry extends Component{
                       className="text-field" 
                       type="text" 
                       value={newIndustry.gross_margin} 
-                      onChange={(event)=>this.handleNewChange(event, 'gross_margin')}
+                      onChange={(e)=>this.handleNewChange(e, 'gross_margin')}
                     />
                     <label className="text-field-label">gross margin (%)</label>
-                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                    <div className="text-field-mask admin-industry-mask-gross-margin"></div>
                   </div>
 
                   <div className="text-field-container">
@@ -283,10 +257,10 @@ class AdminEditIndustry extends Component{
                       className="text-field" 
                       type="text" 
                       value={newIndustry.op_margin} 
-                      onChange={(event)=>this.handleNewChange(event, 'op_margin')}
+                      onChange={(e)=>this.handleNewChange(e, 'op_margin')}
                     />
                     <label className="text-field-label">operating margin (%)</label>
-                    <div className="text-field-mask admin-industry-mask-margin"></div>
+                    <div className="text-field-mask admin-industry-mask-op-margin"></div>
                   </div>
 
                   <div className="modal-btn-container">
@@ -294,8 +268,8 @@ class AdminEditIndustry extends Component{
                   </div>
                 </div>
               }
-              
             </Modal>
+
           </div>
         </div>
       </center>

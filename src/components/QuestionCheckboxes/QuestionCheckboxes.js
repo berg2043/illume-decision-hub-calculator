@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import './QuestionCheckboxes.css';
 
@@ -22,11 +22,11 @@ const QuestionCheckboxes = () => {
       setChecked(holder);
     } else if (Array.isArray(questions)) {
       const state = questions.reduce((acum,arr)=>{
-        if(arr.split){
+        if(!arr.sub_questions){
           acum[arr.id] = true;
         }
         return acum;
-      },{})
+      },{});
       setChecked(state);
     }
   },[questions,userCheckboxes]);
@@ -35,9 +35,9 @@ const QuestionCheckboxes = () => {
     let holder = {...checked};
     holder[id] = !checked[id];
     if(id === 3){
-      holder[7] = !checked[7];
+      holder[7] = checked[id];
     } else if (id === 4){
-      holder[23] = !checked[23];
+      holder[22] = checked[id];
     }
     setChecked(holder);
   }
@@ -66,7 +66,7 @@ const QuestionCheckboxes = () => {
                           type='checkbox' checked={checked[question.id]} 
                           onChange={
                             ()=>{
-                              toggleChecked(question.id)
+                              toggleChecked(question.id);
                             }
                           } 
                         />

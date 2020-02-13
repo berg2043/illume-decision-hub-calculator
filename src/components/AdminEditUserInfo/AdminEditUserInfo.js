@@ -124,7 +124,7 @@ class AdminEditUserInfo extends Component {
                   <th>Company</th>
                   <th>Phone Number</th>
                   <th>Email</th>
-                  <th>Actions</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -209,22 +209,22 @@ class AdminEditUserInfo extends Component {
                   <input
                     className="text-field text-field-active"
                     type={this.state.showPassword} 
-                    value={editUser.checkPassword}
-                    onChange={(event) => this.handleChange(event, 'checkPassword')}
+                    onChange={(e) => this.handleChange(e, 'checkPassword')}
                    />
-                  <label className="text-field-label">confirm password</label>{JSON.stringify(editUser.checkPassword)}
-                  <div className="text-field-mask admin-user-mask-password"></div>
-                  <input type="checkbox" onChange={this.togglePasswordView} />
-                  <label> Show Password</label>
+                  <label className="text-field-label">confirm password</label>
+                  <div className="text-field-mask admin-user-mask-confirm-password"></div>
+                  <span>
+                    <input type="checkbox" onChange={this.togglePasswordView} />
+                    <label> Show Passwords</label>
+                  </span>
                 </div>
-
-
 
                 <select
                   className="dropdown register-dropdown"
                   value={editUser.industryid || 'industry'}
-                  onChange={(event) => this.handleDropdownChange(event, 'industryid')}
+                  onChange={(e) => this.handleDropdownChange(e, 'industryid')}
                 >
+                  <option className="dropdown-option" value='' disabled>Select Industry</option>
                   {this.props.industry.map(industry =>
                     <option key={industry.id} value={industry.id}>{industry.industry}</option>
                   )}
@@ -233,8 +233,9 @@ class AdminEditUserInfo extends Component {
                 <select
                   className="dropdown register-dropdown"
                   value={editUser.usertype || 'usertype'}
-                  onChange={(event) => this.handleDropdownChange(event, 'usertype')}
+                  onChange={(e) => this.handleDropdownChange(e, 'usertype')}
                 >
+                  <option className="dropdown-option" value='' disabled>Select User Type</option>
                   <option className="dropdown-option" key={1} value={false}>User</option>
                   <option className="dropdown-option" key={2} value={true}>Admin</option>
                 </select>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import './Stepper.css';
@@ -46,7 +46,13 @@ export default function Stepper() {
 
   // Set local state for input
   const handleChange = e => {
-    setInput(e.target.value);
+    if(questionData.question2){
+      let holder = {...input}
+      holder[e.target.name] = e.target.value;
+      setInput(holder)
+    } else {
+      setInput(e.target.value);
+    }
     checkForValue(e);
   }
 
@@ -92,8 +98,9 @@ export default function Stepper() {
               <div>
                 <p className="question-text">
                   {
-                    user[0] && user[0].service && questionData.question? 
-                      questionData.question.replace(/product/g, 'service'): 
+                    user[0] && user[0].service && questionData.question ? 
+                      questionData.question.replace(/product/g, 'service')
+                      : 
                       questionData.question
                   }
                 </p>
@@ -107,7 +114,8 @@ export default function Stepper() {
                             <label className="radio-container">
                               {
                                 user[0] && user[0].service && split.split_text?
-                                split.split_text.replace(/Product/g, 'Service'):
+                                split.split_text.replace(/Product/g, 'Service')
+                                :
                                 split.split_text
                               }
                               <input
@@ -129,29 +137,63 @@ export default function Stepper() {
                     </span>
                   </div>
                   :
-                  <center>
-                    <div className="text-field-container" key={questionData.question_id}>
-                      <input 
-                        className="text-field"
-                        value={input} 
-                        onChange={(e)=>handleChange(e)} 
-                        type={questionData.response_type} 
-                        autoFocus
-                      />
-                      <label className="text-field-label">enter value</label>
-                      <div className="text-field-mask stepper-mask"></div>
-                      <span className="tooltip-background tooltip-background-textfield">
-                        <span className="tooltip-icon">?</span>
-                        <span className="tooltip-text">{questionData.help_text}</span>
-                      </span>
-                    </div>
-                  </center>
+                  <>
+                    <center>
+                      <div className="text-field-container" key={questionData.question_id}>
+                        <input 
+                          className="text-field"
+                          value={questionData.question2? input[questionData.header]: input} 
+                          name={questionData.header}
+                          onChange={(e)=>handleChange(e)} 
+                          type={questionData.response_type} 
+                          autoFocus
+                        />
+                        <label className="text-field-label">enter value</label>
+                        <div className="text-field-mask stepper-mask"></div>
+                        <span className="tooltip-background tooltip-background-textfield">
+                          <span className="tooltip-icon">?</span>
+                          <span className="tooltip-text">{questionData.help_text}</span>
+                        </span>
+                      </div>
+                    </center>
+                    {
+                      questionData.question2? 
+                        <>
+                          <p className="question-text">
+                          {
+                            user[0] && user[0].service && questionData.question2? 
+                              questionData.question2.replace(/product/g, 'service'): 
+                              questionData.question2
+                          }
+                          </p>
+                          <center>
+                            <div className="text-field-container" key={questionData.question_id}>
+                              <input 
+                                className="text-field"
+                                value={input[questionData.header + '2']} 
+                                name={questionData.header + '2'}
+                                onChange={(e)=>handleChange(e)} 
+                                type={questionData.response_type2} 
+                                autoFocus
+                              />
+                              <label className="text-field-label">enter value</label>
+                              <div className="text-field-mask stepper-mask"></div>
+                              <span className="tooltip-background tooltip-background-textfield">
+                                <span className="tooltip-icon">?</span>
+                                <span className="tooltip-text">{questionData.help_text2}</span>
+                              </span>
+                            </div>
+                          </center>
+                        </>:
+                        null
+                    }
+                  </>
                 }
               </div>
             </form>
           </div>
         </div>
-        {lastPageID.length > 0 ? <div onClick={lastPage} className='arrow-left' />: null}
+        {lastPageID.length > 0 ? <div onClick={lastPage} className='arrow-left' /> : null}
         <div onClick={nextPage} className='arrow-right' />
       </div>
     </center>
