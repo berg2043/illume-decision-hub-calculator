@@ -103,9 +103,9 @@ CREATE TABLE "disclaimer" (
 --#region Insert into questions
 INSERT INTO "questions" ("question", "response_type", "help_text", "sub_questions", "split", "checkboxes", "header", "question2", "response_type2", "help_text2")
 VALUES (
-    'Is this for a single sale or total product sales?',
+    'Is this for a single sale or for total product sales?',
     'radio',
-    'Single sales are for when you are only considering a single transaction where total product sales considers multiple transactions.',
+    'Single sales are for when you are only considering a single transaction; total product sales consider multiple transactions',
     NULL,
     TRUE,
     FALSE,
@@ -117,7 +117,7 @@ VALUES (
 (
     'What is your revenue?',
     'number',
-    'Revenue is that amount of money you charge for a product or service',
+    'Revenue is the amount of money you charge for a product or service',
     NULL,
     FALSE,
     FALSE,
@@ -129,7 +129,7 @@ VALUES (
 (
     'What are your direct costs?',
     'number',
-    'Direct costs are costs that are specific to a sale such as labor costs and material costs',
+    'Direct costs are specific to a sale, such as labor costs and material costs',
     NULL,
     FALSE,
     FALSE,
@@ -141,7 +141,7 @@ VALUES (
 (
     'What are your indirect costs?',
     'number',
-    'Indirect costs are costs that apply to all sales or services such as gas or rent',
+    'Indirect costs apply to all sales or services, such as gas or rent',
     NULL,
     FALSE,
     FALSE,
@@ -151,7 +151,7 @@ VALUES (
     NULL
   ),
 (
-    'What is the total number of sales for this product?',
+    'What are the total number of sales for this product?',
     'number',
     'How much of this product or service do you sell?',
     NULL,
@@ -165,7 +165,7 @@ VALUES (
 (
     'What do you plan on pricing this for?',
     'number',
-    'Consider your costs and the value you bring with this product.',
+    'Consider your costs and the value you bring with this product',
     NULL,
     FALSE,
     FALSE,
@@ -177,7 +177,7 @@ VALUES (
 (
     'Would you like to input your direct costs as a total or walkthrough the categories?',
     'radio',
-    'A total will just be one input field where the walkthrough will bring you through possible direct cost categories.',
+    'A total will just be one input field; the walkthrough will bring you through common direct cost categories',
     NULL,
     TRUE,
     FALSE,
@@ -187,21 +187,21 @@ VALUES (
     NULL
   ),
 (
-    'What is the rate per hour of this labor for this product?',
+    'What is the per-hour labor rate for this product?',
     'number',
-    'Consider just one labor rate for this field.',
+    'Consider just one labor rate for this field',
     3,
     FALSE,
     FALSE,
     'Labor',
-    'How many hours of labor is done at this rate for this product?',
+    'How many hours of labor are done at this rate for this product?',
     'number',
-    'Consider just one labor rate for this field.'
+    'Consider just one labor rate for this field'
   ),
 (
     'What are your parts/raw material costs?',
     'number',
-    'These are things that go into the making of the product or delivering of the service.',
+    'These are things that go into the making of the product or the delivery of the service',
     3,
     FALSE,
     FALSE,
@@ -211,33 +211,33 @@ VALUES (
     NULL
   ),
 (
-  'What other administrative expenses do you have across your business',
+  'What other administrative expenses do you have across your business?',
   'number',
-  'I am not sure what to include here. Any ideas?',
+  'Other costs that relate directly to this product or service',
   4,
   FALSE,
   FALSE,
-  'Other Administrative Expenses',
+  'Other Administrative Expenses',
   NULL,
   NULL,
   NULL
 ),
 (
-  'What are your rent/lease/business mortgage and utility payments?',
+  'What are your rent, lease, business mortgage, and utility payments?',
   'number',
-  'Remember to include escrow payments here.',
+  'Remember to include escrow payments here',
   4,
   FALSE,
   FALSE,
-  'Office - Mortgage, Lease, Rent, and Utilities',
+  'Office - Mortgage, Lease, Rent, and Utilities',
   NULL,
   NULL,
   NULL
 ),
 (
-  'What are your sales costs or commissions?',
+  'What are your sales costs or commissions?',
   'number',
-  'How much does it cost to make a sale or what do you pay on commission when a sale is made.',
+  'How much does it cost to make a sale, or what do you pay on commission when a sale is made?',
   4,
   FALSE,
   FALSE,
@@ -247,25 +247,25 @@ VALUES (
   NULL
 ),
 (
-  'What are your office staff salaries costs?',
+  'What are your office staff salary costs?',
   'number',
-  'Remember to include yourself if you pay yourself a salary.',
+  'Remember to include yourself if you pay yourself a salary',
   4,
   FALSE,
   FALSE,
-  'Office Staff Salaries',
+  'Office Staff Salaries',
   NULL,
   NULL,
   NULL
 ),
 (
-  'What are your employee benefits costs?',
+  'What are your employee benefits costs?',
   'number',
-  'Benefits include things like health, dental, disability, life, etc.',
+  'Benefits include things like health, dental, disability, life, etc',
   4,
   FALSE,
   FALSE,
-  'Employee Benefits Costs',
+  'Employee Benefits Costs',
   NULL,
   NULL,
   NULL
@@ -283,9 +283,9 @@ VALUES (
   NULL
 ),
 (
-  'How much do you spend on your network, telecomunications, and other comunication platforms?',
+  'How much do you spend on your network, telecomunications, and other communication platforms?',
   'number',
-  'Internet, phone, vpn, and other types of communication costs would fall under here',
+  'Internet, phone, vpn, and other types of communication costs would fall under this category',
   4,
   FALSE,
   FALSE,
@@ -307,9 +307,9 @@ VALUES (
   NULL
 ),
 (
-  'How much do you spend on travel?',
+  'How much do you spend on travel?',
   'number',
-  'This includes meals and entertainment while on buisiness.',
+  'This includes meals and entertainment while on business',
   4,
   FALSE,
   FALSE,
@@ -319,9 +319,9 @@ VALUES (
   NULL
 ),
 (
-  'How much do you spend subscriptions, dues, and fees?',
+  'How much do you spend subscriptions, dues, and fees?',
   'number',
-  'This includes subscriptions like Office 365, adobe, and other regular payments.',
+  'This includes subscriptions like Office 365, adobe, and other regular payments',
   4,
   FALSE,
   FALSE,
@@ -331,9 +331,9 @@ VALUES (
   NULL
 ),
 (
-  'How much do you spend on education and trainings?',
+  'How much do you spend on education and trainings?',
   'number',
-  'Consider both one off events and coninual education/trainings.',
+  'Consider both one-off events and continual education/trainings',
   4,
   FALSE,
   FALSE,
@@ -345,7 +345,7 @@ VALUES (
 (
   'How much are you insurance costs?',
   'number',
-  'Depending on your business, you may have multiple types of insurance.  Add them together here.',
+  'Depending on your business, you may have multiple types of insurance. Add them together here',
   4,
   FALSE,
   FALSE,
@@ -357,31 +357,19 @@ VALUES (
 (
   'Would you like to input your indirect costs as a total or walkthrough the categories?',
   'radio',
-  'A total will just be one input field where the walkthrough will bring you through possible indirect cost categories.',
+  'A total will just be one input field; the walkthrough will bring you through common indirect cost categories',
   NULL,
   TRUE,
   FALSE,
-  'Indirect Costs Walkthrough',
+  'Indirect Costs Walkthrough',
   NULL,
   NULL,
   NULL
 ),
 (
-  'How much are you insurance costs?',
+  'How much do you spend on delivery or freight?',
   'number',
-  'Depending on your business, you may have multiple types of insurance.  Add them together here.',
-  4,
-  FALSE,
-  FALSE,
-  'Insurance',
-  NULL,
-  NULL,
-  NULL
-),
-(
-  'How do you spend on delivery or freight?',
-  'number',
-  'I am not sure what to include here. Any ideas?',
+  'Enter delivery fees here',
   4,
   FALSE,
   FALSE,
@@ -393,11 +381,11 @@ VALUES (
 (
   'What other office expenses do you have?',
   'number',
-  'I am not sure what to include here. Any ideas?',
+  'Other recurring costs that you may have',
   4,
   FALSE,
   FALSE,
-  'Other Office Expenses',
+  'Other Office Expenses',
   NULL,
   NULL,
   NULL
@@ -474,7 +462,7 @@ VALUES (1,1,2),
 (2,18,47),
 (2,19,48),
 (2,20,49),
-(2,21,66),
+(2,21,65),
 (3,11,51),
 (3,12,52),
 (3,13,53),
@@ -485,24 +473,21 @@ VALUES (1,1,2),
 (3,18,58),
 (3,19,59),
 (3,20,60),
-(3,21,69),
+(3,21,67),
 (2,5,14),
 (3,1,15),
 (1,23,64),
-(1,24,65),
-(1,25,18),
-(2,23,67),
-(2,24,68),
-(2,25,21),
-(3,23,70),
-(3,24,71),
-(3,25,24);
+(1,24,18),
+(2,23,66),
+(2,24,21),
+(3,23,68),
+(3,24,24);
 --#endregion
 
 --#region Set up Splits
 INSERT INTO "split" ("calculator_id", "question_id","split_text","next_id")
-VALUES(1,1,'Single Product',2),
-(1,1,'Total Product',5),
+VALUES(1,1,'Single Product',2),
+(1,1,'Total Product',5),
 (1,7,'Single',3),
 (1,7,'Walkthrough',16),
 (2,7,'Single',7),
@@ -515,10 +500,10 @@ VALUES(1,1,'Single Product',2),
 (2,22,'Walkthrough',39),
 (3,22,'Single',11),
 (3,22,'Walkthrough',50),
-(2,1,'Single Product',14),
-(2,1,'Total Product',61),
-(3,1,'Single Product',15),
-(3,1,'Total Product',9);
+(2,1,'Single Product',14),
+(2,1,'Total Product',61),
+(3,1,'Single Product',15),
+(3,1,'Total Product',9);
 --#endregion
 
 --#region Set Disclaimer
