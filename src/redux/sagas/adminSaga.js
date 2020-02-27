@@ -6,7 +6,7 @@ function* deleteAdminIndustryInfo(action){
     yield axios.delete(`/api/admin/industry-info/${action.payload}`);
     yield put({type: `GET_ADMIN_INDUSTRY`});
   } catch(error){
-    console.log('Error in admin industry info DELETE', error);
+    alert('Error deleting industry');
   }
 }
 
@@ -15,7 +15,7 @@ function* getAdminQuestion(action){
     const response = yield axios.get(`/api/admin/questions/${action.payload}`);
     yield put({type: `SET_ADMIN_QUESTION`, payload: response.data});
   } catch(error){
-    console.log('Error in admin questions GET', error);
+    alert('Error retrieving main questions');
   }
 }
 
@@ -24,7 +24,7 @@ function* getAdminSubquestion(action){
     const response = yield axios.get(`/api/admin/subquestions`);
     yield put({type: `SET_ADMIN_SUB_QUESTION`, payload: response.data});
   } catch(error){
-    console.log('Error in admin sub-questions GET', error);
+    alert('Error retrieving sub-questions');
   }
 }
 
@@ -33,7 +33,7 @@ function* getAdminUserInfo(action){
     const response = yield axios.get(`/api/admin/user-info`);
     yield put({type: `SET_ADMIN_USER_INFO`, payload: response.data});
   } catch(error){
-    console.log('Error in admin user info GET', error);
+    alert('Error retrieving user information');
   }
 }
 
@@ -42,16 +42,24 @@ function* postAdminIndustryInfo(action){
     yield axios.post(`/api/admin/industry-info`, action.payload);
     yield put({type: `GET_ADMIN_INDUSTRY`});
   } catch(error){
-    console.log('Error in admin industry info POST', error);
+    alert('Error adding new industry');
   }
 }
 
 function* putAdminIndustryInfo(action){
   try{
     yield axios.put(`/api/admin/industry-info`, action.payload);
-    yield put({type: `GET_INDUSTRY`});
+    yield put({type: `GET_ADMIN_INDUSTRY`});
   } catch(error){
-    console.log('Error in admin industry info PUT', error);
+    alert('Error updating industry');
+  }
+}
+
+function* putAdminNewPassword(action) {
+  try {
+    yield axios.put(`/api/admin/new-password`, action.payload);
+  } catch (error) {
+    alert('Error updating password');
   }
 }
 
@@ -60,7 +68,7 @@ function* putAdminQuestion(action){
     yield axios.put(`/api/admin/question`, action.payload);
     yield put({type: `GET_ADMIN_QUESTION`, payload: action.payload[3]});
   } catch(error){
-    console.log('Error in admin question PUT', error);
+    alert('Error updating main question');
   }
 }
 
@@ -69,7 +77,7 @@ function* putAdminSubquestion(action){
     yield axios.put(`/api/admin/question`, action.payload);
     yield put({type: `GET_ADMIN_SUB_QUESTION`, payload: action.payload[3]});
   } catch(error){
-    console.log('Error in admin sub-question PUT', error);
+    alert('Error updating sub-question');
   }
 }
 
@@ -79,7 +87,7 @@ function* putAdminUserInfo(action){
     yield axios.put(`/api/admin/user-info`, action.payload);
     yield put({type: `GET_ADMIN_USER_INFO`});
   } catch(error){
-    console.log('Error in admin user info PUT', error);
+    alert('Error updating user information');
   }
 }
 
@@ -90,6 +98,7 @@ function* adminSaga() {
   yield takeLatest(`GET_ADMIN_USER_INFO`, getAdminUserInfo);
   yield takeLatest(`POST_ADMIN_INDUSTRY_INFO`, postAdminIndustryInfo);
   yield takeLatest(`PUT_ADMIN_INDUSTRY_INFO`, putAdminIndustryInfo);
+  yield takeLatest(`PUT_ADMIN_NEW_PASSWORD`, putAdminNewPassword);
   yield takeLatest(`PUT_ADMIN_QUESTION`, putAdminQuestion);
   yield takeLatest(`PUT_ADMIN_SUB_QUESTION`, putAdminSubquestion);
   yield takeLatest(`PUT_ADMIN_USER_INFO`, putAdminUserInfo);

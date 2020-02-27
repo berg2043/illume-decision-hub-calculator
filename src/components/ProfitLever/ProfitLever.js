@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import Axios from 'axios'
+import Axios from 'axios';
 import './ProfitLever.css';
 import Nav from '../Nav/Nav';
+import ExploreMore from '../ExploreMore/ExploreMore';
 
 export default function ProfitLever() {
 
@@ -14,6 +15,7 @@ export default function ProfitLever() {
   const [growth, setGrowth] = useState(0);
   const [directCostChange, setDirectCostChange] = useState(0);
   const [indirectCostChange, setIndirectCostChange] = useState(0);
+  const [showExplore, setShowExplore] = useState(false);
 
   // Connects to redux
   const inputData = useSelector(state => state.input);
@@ -24,9 +26,11 @@ export default function ProfitLever() {
 
   // Dynamically calculates the profit lever depending on settings
   useEffect(() => {
+    const input8First = inputData[8] && +inputData[8]['Labor'];
+    const input8Second = inputData[8] && +inputData[8]['Labor2'];
     let directCosts = +splitPath[7] === 3 ?
       +inputData[3] || 0:
-      ((inputData[8] && +inputData[8]['Labor'] || 0) * (inputData[8] && +inputData[8]['Labor2'] || 0)) + 
+      ((input8First || 0) * (input8Second || 0)) + 
       (+inputData[9] || 0);
 
     let indirectCosts = +splitPath[22] === 4 ?
@@ -37,15 +41,13 @@ export default function ProfitLever() {
       (+inputData[19] || 0) + (+inputData[20] || 0) + (+inputData[21] || 0) + 
       (+inputData[23] || 0) + (+inputData[24] || 0) + (+inputData[25] || 0);
 
-    let divisor = +splitPath[1] === 2 ? 1 : +inputData[5] || 1;
-    console.log(directCosts,indirectCosts, inputData[3]);
     setPrice(
       (
         (
           (+inputData[2] * 1.01 - directCosts - indirectCosts) /
           (+inputData[2] - directCosts - indirectCosts)
         ) - 1
-      ) * 100 / divisor
+      ) * 100
     );
     setGrowth(
       (
@@ -53,7 +55,7 @@ export default function ProfitLever() {
           ((+inputData[2] * 1.01 - directCosts * 1.01) - indirectCosts) /
           (+inputData[2] - directCosts - indirectCosts)
         ) - 1
-      ) * 100 / divisor
+      ) * 100
     );
     setDirectCostChange(
       (
@@ -61,7 +63,7 @@ export default function ProfitLever() {
           (+inputData[2] - (directCosts * .99) - indirectCosts) /
           (+inputData[2] - directCosts - indirectCosts)
         ) - 1
-      ) * 100 / divisor
+      ) * 100
     );
     setIndirectCostChange(
       (
@@ -69,11 +71,12 @@ export default function ProfitLever() {
           (+inputData[2] - directCosts - (indirectCosts * .99)) /
           (+inputData[2] - directCosts - indirectCosts)
         ) - 1
-      ) * 100 / divisor
+      ) * 100
     );
   }, [inputData, splitPath]);
 
   // Gets the questions and splits for the given results page
+  // This could be a saga, but I found it fine to just have it here
   useEffect(() => {
     Axios.get('/api/question/results/' + 1).then(response => {
       let temp = response.data.reduce((acum, arr) => {
@@ -106,7 +109,6 @@ export default function ProfitLever() {
       }, {});
       setSplits(temp);
     }).catch(err => {
-      console.log(err);
     });
   }, []);
 
@@ -121,9 +123,10 @@ export default function ProfitLever() {
         setSplitPath(temp);
       }
     }
-  }, [splits, inputData]);
+  }, [splits, splitPath, inputData]);
 
   // Adds class if input has a value, removes the class if input has no value
+  // The class moves the label from inside to just above the text field
   const checkForValue = e => e.target.value ? e.target.classList.add('text-field-active') : e.target.classList.remove('text-field-active');
 
   // Handles the change of the radio button
@@ -136,6 +139,8 @@ export default function ProfitLever() {
   // Dynamically renders the questions associated with the calculator in the order
   // they would appear in the stepper component
   function stepper(start) {
+    // When a split in a path happens, this function handles the display of the options
+    // and calls then next question based on which radio button is selected
     function splitter(split) {
       return (
         <>
@@ -149,8 +154,8 @@ export default function ProfitLever() {
                         <div className="radio-wrapper">
                           <label className="radio-container">
                             {
-                              user[0] && user[0].service && radio.split_text?
-                              radio.split_text.replace(/Product/g, 'Service')
+                              user[0] && user[0].service && radio.split_text ?
+                              radio.split_text.replace(/Product/g, 'Service') 
                               :
                               radio.split_text
                             }
@@ -159,7 +164,18 @@ export default function ProfitLever() {
                               name="next"
                               value={radio.next_id}
                               checked={+splitPath[split] === +radio.next_id}
-                              onChange={(e) => { radioChange(e, split) }}
+                              onChange={
+                                (e) => { 
+                                  radioChange(e, split); 
+                                  dispatch({ 
+                                    type: 'ADD_INPUT_VALUE',
+                                    payload: {
+                                      key: radio.question_id,
+                                      value: radio.next_id 
+                                    } 
+                                  });
+                                }
+                              }
                             />
                             <span className="radio-btn"></span>
                           </label>
@@ -168,32 +184,35 @@ export default function ProfitLever() {
                     );
                   })}
                 </form>
-              </div> 
+              </div>
               :
               null
           }
-          {splitPath[split.toString()] ?
-            stepper(splitPath[split.toString()]) 
-            :
-            null
+          {
+            splitPath[split.toString()] ?
+              stepper(splitPath[split.toString()]) 
+              :
+              null
           }
         </>
       );
     }
 
+    // Holds variables to avoid excessive &'s  
     let next = paths[start] && paths[start].next_id;
     let doesSplit = paths[start] && paths[start].split;
     let questionId = paths[start] && paths[start].question_id;
 
+    // Returns the question text and input field if the user has it associated with their profile
     return (
       <div className="max-width-container">
         <div className="align-left">
           {
-            userCheckboxes.findIndex(el => el.question_id === (paths[start] && paths[start].question_id)) !== -1 ?
+            userCheckboxes.findIndex(el => el.question_id === (questionId)) !== -1 ?
               <p className="results-text">
                 {
-                  user[0] && user[0].service &&  paths[start] && paths[start].question?
-                  paths[start].question.replace(/product/g, 'service')
+                  user[0] && user[0].service &&  paths[start] && paths[start].question ?
+                  paths[start].question.replace(/product/g, 'service') 
                   :
                   paths[start].question
                 }
@@ -205,16 +224,17 @@ export default function ProfitLever() {
         {doesSplit ?
           null 
           :
-          userCheckboxes.findIndex(el => el.question_id === (paths[start] && paths[start].question_id)) !== -1 ?
+          userCheckboxes.findIndex(el => el.question_id === (questionId)) !== -1 ?
             <>
-              <div className="text-field-container" key={paths[start] && paths[start].question_id}>
+              <div className="text-field-container" key={questionId}>
                 <input
                   className="text-field text-field-active"
                   type={paths[start] && paths[start].response_type}
                   name={paths[start] && paths[start].header}
                   value={
-                    paths[start] && paths[start].question2?
-                    inputData[questionId] && inputData[questionId][paths[start] && paths[start].header]:
+                    paths[start] && paths[start].question2 ?
+                    inputData[questionId] && inputData[questionId][paths[start] && paths[start].header]
+                    :
                     inputData[questionId]
                   } 
                   onChange={
@@ -247,16 +267,19 @@ export default function ProfitLever() {
                 <div className="text-field-mask stepper-mask"></div>
               </div>
               {
-                paths[start] && paths[start].question2?
+                // for labor rates really but there for scalability.  It lets you pair
+                // two questions together
+                paths[start] && paths[start].question2 ? 
                   <>
                     <p className="results-text">
                       {
-                        user[0] && user[0].service && paths[start] && paths[start].question2?
-                        paths[start].question2.replace(/product/g, 'service'):
+                        user[0] && user[0].service && paths[start] && paths[start].question2 ?
+                        paths[start].question2.replace(/product/g, 'service') 
+                        :
                         paths[start].question2
                       }
                     </p>
-                    <div className="text-field-container" key={paths[start] && paths[start].question_id}>
+                    <div className="text-field-container" key={questionId}>
                       <input
                         className="text-field text-field-active"
                         type={paths[start] && paths[start].response_type2}
@@ -281,7 +304,8 @@ export default function ProfitLever() {
                       <label className="text-field-label">enter value</label>
                       <div className="text-field-mask stepper-mask"></div>
                     </div>
-                  </>:
+                  </> 
+                  :
                   null
               }
             </>
@@ -289,11 +313,16 @@ export default function ProfitLever() {
             null
         }
         {
+          // If there's a next question, it then checks if this questions splits.
+          // The path has a null value for next if it is the end of the path.
+          // If this question splits, it calls splitter to handle displaying
+          // radio buttons and their selections.  Null stops the recursion and
+          // doesn't display any new text.
           next ?
             doesSplit ?
               splitter(questionId) 
               :
-              stepper(next) 
+              stepper(next)
             :
             null // for next?
         }
@@ -307,7 +336,6 @@ export default function ProfitLever() {
       <div className="main-container">
         <div className="top-card-container">
           <h1 className="main-heading">Define Profit Levers</h1>
-          {stepper(1)}
           <div className="data-result">
             <h3 className="data-result-heading">Result</h3>
             <p>A 1% improvement in price will deliver {isNaN(price.toFixed(1))? 0 : price.toFixed(1)}% improvement in profit.</p>
@@ -336,6 +364,12 @@ export default function ProfitLever() {
                 null
             }
           </div>
+          <br/>
+          <button onClick={()=>setShowExplore(!showExplore)} className='secondary-btn'>
+            {showExplore? 'hide': 'Explore More Options'}
+          </button>
+          {showExplore? <ExploreMore/>: null}
+          {stepper(1)}
         </div>
       </div>
     </center>
